@@ -1,0 +1,17 @@
+<project name="pacs-emf-gen" default="main">
+	<description>simple example build file</description>
+
+	<!-- #file #required -->
+	<property name="model" value="" description="The input EMF model"/>
+	
+	<target name="loadModels">
+	    <epsilon.emf.register file="test.ecore"/>
+	    <epsilon.emf.loadModel name="M" modelfile="${model}" metamodeluri="http://cs.york.ac.uk/" read="true" store="true"/>
+	</target>
+	
+	<target name="main" depends="loadModels">
+		<epsilon.egl src="test.egx" outputroot="${outputRoot}">
+			<model ref="M"/>
+		</epsilon.egl>
+	</target>
+</project>
