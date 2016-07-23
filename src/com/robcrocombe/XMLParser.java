@@ -19,18 +19,18 @@ public class XMLParser
 {
 	private List<Rule> rules;
 	private int maxDepth = 0;
-	
+
 	/**
 	 * Create a new parser that uses the given {@link Rule}s when parsing any
 	 * XML content.
-	 * 
+	 *
 	 * @param rules
 	 * 		The rules applied to any parsed content.
 	 */
 	public XMLParser(Rule... rules)
 	{
 		this.rules = Arrays.asList(rules);
-		
+
 		for (Rule rule : rules)
 		{
 			if (rule.depth > maxDepth)
@@ -39,10 +39,10 @@ public class XMLParser
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the attribute's String value from the given Node.
-	 * 
+	 *
 	 * @param node
 	 * 		An XML Node with attributes.
 	 * @param name
@@ -55,16 +55,16 @@ public class XMLParser
 		NamedNodeMap map = node.getAttributes();
 		Node item = map.getNamedItem(name);
 		if (item == null) return null;
-		
+
 		String value = item.getNodeValue();
 		if (value == null || value.isEmpty()) return null;
-		
+
 		return value;
 	}
-	
+
 	/**
 	 * Start parsing the XML and execute the rules.
-	 * 
+	 *
 	 * @param source
 	 * 		An InputStream representing the XML source.
 	 * @throws SAXException
@@ -76,11 +76,11 @@ public class XMLParser
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(source);
-		
+
 		int level = -1;
 		parse(doc.getFirstChild(), level);
 	}
-	
+
 	private void parse(Node node, int level)
 	{
 		level++;
@@ -89,9 +89,9 @@ public class XMLParser
 			// No need to go further if no rules will be executed.
 			return;
 		}
-		
+
 		if (node.getNodeType() == Node.COMMENT_NODE)
-	    {
+		{
 			for (Rule rule : rules)
 			{
 				if (rule.type == Type.COMMENT && rule.depth == level)
@@ -99,7 +99,7 @@ public class XMLParser
 					rule.handleComment(node, node.getTextContent());
 				}
 			}
-	    }
+		}
 		else
 		{
 			for (Rule rule : rules)
@@ -116,20 +116,20 @@ public class XMLParser
 				}
 			}
 		}
-		
+
 		// Recurse through each child node
-	    NodeList nodeList = node.getChildNodes();
-	    for (int i = 0; i < nodeList.getLength(); ++i)
-	    {
-	        Node currentNode = nodeList.item(i);
-	        if (currentNode.getNodeType() == Node.ELEMENT_NODE ||
-	        		currentNode.getNodeType() == Node.COMMENT_NODE)
-	        {
-	        	parse(currentNode, level);
-	        }
-	    }
+		NodeList nodeList = node.getChildNodes();
+		for (int i = 0; i < nodeList.getLength(); ++i)
+		{
+			Node currentNode = nodeList.item(i);
+			if (currentNode.getNodeType() == Node.ELEMENT_NODE ||
+					currentNode.getNodeType() == Node.COMMENT_NODE)
+			{
+				parse(currentNode, level);
+			}
+		}
 	}
-	
+
 	/**
 	 * The type of {@link Rule}.
 	 */
@@ -148,7 +148,7 @@ public class XMLParser
 		 */
 		COMMENT
 	}
-	
+
 	/**
 	 * A class for executing code to act on certain XML elements.
 	 */
@@ -157,10 +157,10 @@ public class XMLParser
 		public Type type;
 		public int depth;
 		public String name;
-		
+
 		/**
 		 * The constructor for {@link Type#COMMENT} only.
-		 * 
+		 *
 		 * @param type
 		 * 		The {@link Type} of rule this is for.
 		 * @param depth
@@ -174,14 +174,14 @@ public class XMLParser
 				throw new IllegalArgumentException(
 						"This constructor can only be used with Type.COMMENT");
 			}
-			
+
 			this.type = type;
 			this.depth = depth;
 		}
 		/**
 		 * /**
 		 * The constructor for {@link Type#ELEMENT} and {@link Type#CONTENT} only.
-		 * 
+		 *
 		 * @param type
 		 * 		The {@link Type} of rule this is for.
 		 * @param depth
@@ -197,12 +197,12 @@ public class XMLParser
 				throw new IllegalArgumentException(
 						"This constructor cannot be used with Type.COMMENT");
 			}
-			
+
 			this.type = type;
 			this.depth = depth;
 			this.name = name;
 		}
-		
+
 		/**
 		 * The event method for handling {@link Type#ELEMENT}s.
 		 * @param node
@@ -212,7 +212,7 @@ public class XMLParser
 		 */
 		public void handleElement(Node node, NamedNodeMap attributes)
 		{ };
-		
+
 		/**
 		 * The event method for handling {@link Type#CONTENT}s.
 		 * @param node
@@ -222,7 +222,7 @@ public class XMLParser
 		 */
 		public void handleContent(Node node, String value)
 		{ };
-		
+
 		/**
 		 * The event method for handling {@link Type#COMMENT}s.
 		 * @param node
